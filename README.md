@@ -10,7 +10,7 @@ This project is designed to monitor water flow in real-time, with a Django backe
 
 ### Klonlash / Cloning:
 ```bash
-git clone https://github.com/javohuz/suv_nazorat.git
+git clone https://github.com/javohuz/Water_Flow_Monitoring.git
 cd suv_nazorat/backend
 ```
 
