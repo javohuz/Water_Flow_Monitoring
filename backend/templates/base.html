@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Water Flow Data{% endblock %}</title>
+
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <header class="main-header">
+    <nav class="nav-links">
+      <a href="{% url 'flow_data' %}">⏱ Asosiy</a>
+      <a href="{% url 'hourly_data' %}">🕐 Soatlik</a>
+      <a href="{% url 'weekly_data' %}">📅 Haftalik</a>
+      <a href="{% url 'monthly_data' %}">📆 Oylik</a>
+    </nav>
+  </header>
+  <h1 style="padding-bottom: 0;">📊 Suv Oqimi Monitoring</h1>
+
+  <div class="main_content">
+    {% block content %}
+    <!-- Page content goes here -->
+    {% endblock %}
+
+    {% block content_hourly %}
+    {% endblock %}
+  </div>
+
+  <!-- Global JS -->
+  <script src="{% static 'js/script.js' %}"></script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

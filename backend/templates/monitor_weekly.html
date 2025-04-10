@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Haftalik Oqim Ma'lumotlari{% endblock %}
+
+{% block content %}
+<h1>Haftalik o‘rtacha suv oqimi</h1>
+
+<div class="table-wrapper">
+
+  <table border="1" cellpadding="8">
+    <tr>
+      <th>Hafta</th>
+      <th>h (m)</th>
+      <th>A (m²)</th>
+      <th>P (m)</th>
+      <th>R (m)</th>
+      <th>V (m/s)</th>
+      <th>Q (m³/s)</th>
+    </tr>
+    {% for flow in weekly_flows %}
+    <tr>
+      <td>{{ flow.timestamp|date:"Y/m/d" }}</td>
+      <td>{{ flow.h }}</td>
+      <td>{{ flow.A }}</td>
+      <td>{{ flow.P }}</td>
+      <td>{{ flow.R }}</td>
+      <td>{{ flow.V }}</td>
+      <td>{{ flow.Q }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<h2 style="text-align: center;">Haftalik Suv Sarfi Grafigi</h2>
+<div id="chart-container">
+  <canvas id="weeklyChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const labels = [
+    {% for flow in weekly_flows reversed %}
+      "{{ flow.timestamp|date:'d/m' }}"{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ];
+
+  const data = {
+    labels: labels,
+    datasets: [{
+      label: 'Haftalik Q (m³/s)',
+      data: [
+        {% for flow in weekly_flows reversed %}
+          {{ flow.Q }}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ],
+      borderColor: 'rgb(54, 162, 235)',
+      tension: 0.3
+    }]
+  };
+
+  new Chart(document.getElementById('weeklyChart'), {
+    type: 'line',
+    data: data,
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Haftalik suv sarfi grafigi'
+        }
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Hafta (kun/oy)'
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Q (m³/s)'
+          },
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+{% endblock %}

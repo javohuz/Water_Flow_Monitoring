@@ -1,0 +1,266 @@
+:root {
+  --primary-color: #007bff;
+  --text-color: #222;
+  --bg-color: #f9f9f9;
+  --border-color: #ddd;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+
+/* === HEADER === */
+.main-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  background-color: #ffffff;
+  padding: 10px 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.main-header h1 {
+  width: 100%;
+  margin: 10px 0 5px 0;
+  padding: 0;
+  font-size: 1.6rem;
+  color: var(--primary-color);
+}
+
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--text-color);
+  background: #e6f0ff;
+  border: 1px solid var(--primary-color);
+  padding: 8px 14px;
+  border-radius: 25px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.nav-links a:hover {
+  background: var(--primary-color);
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Hide big title on mobile */
+@media screen and (max-width: 768px) {
+  .main-header h1 {
+    display: none;
+  }
+
+  .nav-links a {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+  }
+}
+
+.main_content { 
+  width: 100%;
+  padding: 20px;
+}
+/* === HEADINGS === */
+h1, h2 {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--primary-color);
+}
+
+/* === TABLE STYLES === */
+.table-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  max-height: 450px;
+  overflow-x: auto;
+  overflow-y: auto;
+  min-width: 750px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: white;
+  margin: 0 auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 750px;
+}
+
+th, td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+th {
+  background-color: var(--primary-color);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+/* === CHART CONTAINER === */
+#chart-container {
+  width: 100% !important;
+  max-width: 1200px;
+  min-width: 750px !important;
+  padding: 20px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  h1, h2 {
+    padding: 30px 20px;
+  }
+
+  .table-wrapper {
+    min-width: unset;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  #chart-container {
+    overflow-x: auto;
+    padding: 10px;
+  }
+
+  canvas {
+    min-width: 600px;
+  }
+}
+
+/* === SETTINGS SECTION === */
+.settings-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 40px auto 20px auto;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.settings-image img {
+  width: 260px;
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 2px solid var(--primary-color);
+}
+
+.no-image {
+  width: 260px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+  color: #999;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.settings-info {
+  flex: 1;
+  min-width: 300px;
+}
+
+.settings-info h2 {
+  color: var(--primary-color);
+  margin-bottom: 15px;
+  padding: 0;
+}
+
+.settings-description {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.settings-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.settings-list li {
+  padding: 6px 0;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.settings-list .tag {
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+.settings-list .min {
+  background-color: #f39c12;
+}
+
+.settings-list .max {
+  background-color: #c0392b;
+}
+
+@media screen and (max-width: 768px) {
+  .settings-section {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .settings-image img,
+  .no-image {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .settings-info {
+    text-align: center;
+  }
+}
+
+
+html {
+  scroll-behavior: smooth;
+}
+
+

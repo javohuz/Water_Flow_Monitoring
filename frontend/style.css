@@ -1,0 +1,48 @@
+.station-text-search-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 20px;
+  border: 1px solid var(--border, #E2E2E2);
+  background: #FAFAFA;
+}
+
+.btn-input-station {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  border: none;
+  text-decoration: none;
+
+  gap: 6px;
+  font-size: 14px;
+  line-height: normal;
+  font-family: "Noto Sans JP";
+  color: var(--white, #FFF);
+  padding: 10px;
+
+  border-radius: 8px;
+  background: var(--, #51B2FF);
+}
+
+#stationInput {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  color: var(--black, #09122b);
+  font-size: 16px;
+  padding: 1rem 1.6rem;
+  width: 100%;
+
+}
+
+.text-inut-box-top {
+  display: flex;
+  gap: 12px;
+  padding: 10px;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}

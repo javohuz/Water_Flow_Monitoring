@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Oylik Oqim Ma'lumotlari{% endblock %}
+
+{% block content %}
+<h1>Oylik o‘rtacha suv oqimi</h1>
+
+<div class="table-wrapper">
+
+  <table border="1" cellpadding="8">
+    <tr>
+      <th>Oy</th>
+      <th>h (m)</th>
+      <th>A (m²)</th>
+      <th>P (m)</th>
+      <th>R (m)</th>
+      <th>V (m/s)</th>
+      <th>Q (m³/s)</th>
+    </tr>
+    {% for flow in monthly_flows %}
+    <tr>
+      <td>{{ flow.timestamp|date:"Y-m" }}</td>
+      <td>{{ flow.h }}</td>
+      <td>{{ flow.A }}</td>
+      <td>{{ flow.P }}</td>
+      <td>{{ flow.R }}</td>
+      <td>{{ flow.V }}</td>
+      <td>{{ flow.Q }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<h2 style="text-align: center;">Oylik Suv Sarfi Grafigi</h2>
+<div id="chart-container">
+  <canvas id="monthlyChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const labels = [
+    {% for flow in monthly_flows reversed %}
+      "{{ flow.timestamp|date:'Y-m' }}"{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ];
+
+  const data = {
+    labels: labels,
+    datasets: [{
+      label: 'Oylik Q (m³/s)',
+      data: [
+        {% for flow in monthly_flows reversed %}
+          {{ flow.Q }}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ],
+      borderColor: 'rgb(255, 206, 86)',
+      tension: 0.3
+    }]
+  };
+
+  new Chart(document.getElementById('monthlyChart'), {
+    type: 'line',
+    data: data,
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Oylik suv sarfi grafigi'
+        }
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Oy (Y-m)'
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Q (m³/s)'
+          },
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+{% endblock %}

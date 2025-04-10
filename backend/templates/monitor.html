@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Real Vaqtdagi Oqim Ma'lumotlari{% endblock %}
+
+{% block content %}
+
+<section class="settings-section">
+  <div class="settings-image">
+    {% if settings.image %}
+      <img src="{{ settings.image.url }}" alt="Kanal rasmi">
+    {% else %}
+      <div class="no-image">🖼 Rasm yo'q</div>
+    {% endif %}
+  </div>
+
+  <div class="settings-info">
+    <h2>{{ settings.name }}</h2>
+
+    {% if settings.description %}
+      <div class="settings-description">
+        {{ settings.description|safe }}
+      </div>
+    {% endif %}
+
+    <ul class="settings-list">
+      <li><strong>Qo‘polilik koeffitsienti (n):</strong> {{ settings.n }}</li>
+      <li><strong>Kanal eni (b):</strong> {{ settings.b }} m</li>
+      <li><strong>Yon devor burchagi (α):</strong> {{ settings.alpha }}°</li>
+      <li><strong>Gidravlik qiyalik (S):</strong> {{ settings.S }}</li>
+      <li><strong>Zichlik (ρ):</strong> {{ settings.rho }} kg/m³</li>
+      <li><strong>Gravitatsiya (g):</strong> {{ settings.g }} m/s²</li>
+      <li><strong>Bosim (Pd):</strong> {{ settings.Pd }} Pa</li>
+      <li><strong>Minimal suv balandligi:</strong> <span class="tag min">h = {{ settings.min_height }} m</span></li>
+      <li><strong>Maksimal suv balandligi:</strong> <span class="tag max">h = {{ settings.max_height }} m</span></li>
+    </ul>
+  </div>
+</section>
+
+<h1>Eng so‘nggi suv oqimi hisoblari</h1>
+
+<div class="table-wrapper">
+
+  <table border="1" cellpadding="8">
+    <tr>
+      <th>Vaqt (Timestamp)</th>
+      <th>Suv balandligi h (m)</th>
+      <th>Yuza A (m²)</th>
+      <th>Perimetr P (m)</th>
+      <th>Radius R (m)</th>
+      <th>Tezlik V (m/s)</th>
+      <th>Suv sarfi Q (m³/s)</th>
+    </tr>
+    {% for flow in flows %}
+    <tr>
+      <td>{{ flow.timestamp|date:"Y/m/d | H:i" }}</td>
+      <td>{{ flow.h }}</td>
+      <td>{{ flow.A }}</td>
+      <td>{{ flow.P }}</td>
+      <td>{{ flow.R }}</td>
+      <td>{{ flow.V }}</td>
+      <td>{{ flow.Q }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<h2 style="text-align: center;">Eng so‘nggi suv oqimi Grafigi</h2>
+<div id="chart-container">
+  <canvas id="flowChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const labels = [
+    {% for flow in flows reversed %}
+      "{{ flow.timestamp|date:'H:i' }}"{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ];
+
+  const data = {
+    labels: labels,
+    datasets: [{
+      label: 'Suv sarfi Q (m³/s)',
+      data: [
+        {% for flow in flows reversed %}
+          {{ flow.Q }}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ],
+      fill: false,
+      borderColor: 'rgb(75, 192, 192)',
+      tension: 0.3
+    }]
+  };
+
+  new Chart(document.getElementById('flowChart'), {
+    type: 'line',
+    data: data,
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Soat bo‘yicha suv sarfi grafigi'
+        }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Soat (HH:MM)' }},
+        y: { title: { display: true, text: 'Q (m³/s)' }, beginAtZero: true }
+      }
+    }
+  });
+</script>
+{% endblock %}

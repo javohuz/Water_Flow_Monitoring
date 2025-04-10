@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Soatlik Oqim Ma'lumotlari{% endblock %}
+
+{% block content %}
+
+
+<h1>Soatlik o‘rtacha suv oqimi</h1>
+
+<div class="table-wrapper">
+  <table border="1" cellpadding="8">
+    <tr>
+      <th>Soat</th>
+      <th>h (m)</th>
+      <th>A (m²)</th>
+      <th>P (m)</th>
+      <th>R (m)</th>
+      <th>V (m/s)</th>
+      <th>Q (m³/s)</th>
+    </tr>
+    {% for flow in hourly_flows %}
+    <tr>
+      <td>{{ flow.timestamp|date:"Y/m/d | H:00" }}</td>
+      <td>{{ flow.h }}</td>
+      <td>{{ flow.A }}</td>
+      <td>{{ flow.P }}</td>
+      <td>{{ flow.R }}</td>
+      <td>{{ flow.V }}</td>
+      <td>{{ flow.Q }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<h2 style="text-align: center;">Soatlik Suv Sarfi Grafigi</h2>
+<div id="chart-container">
+  <canvas id="hourlyChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const labels = [
+    {% for flow in hourly_flows reversed %}
+      "{{ flow.timestamp|date:'H:i' }}"{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ];
+
+  const data = {
+    labels: labels,
+    datasets: [{
+      label: 'Soatlik Q (m³/s)',
+      data: [
+        {% for flow in hourly_flows reversed %}
+          {{ flow.Q }}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ],
+      borderColor: 'rgb(255, 99, 132)',
+      tension: 0.3
+    }]
+  };
+
+  new Chart(document.getElementById('hourlyChart'), {
+    type: 'line',
+    data: data,
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Soatlik suv sarfi grafigi'
+        }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Soat (HH:MM)' }},
+        y: { title: { display: true, text: 'Q (m³/s)' }, beginAtZero: true }
+      }
+    }
+  });
+</script>
+{% endblock %}
