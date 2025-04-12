@@ -1,7 +1,12 @@
 from django.utils import timezone
 from django.db.models import Avg
 from datetime import timedelta
-from .models import FlowCalculation, ChannelSettings, HourlyFlowSummary, WeeklyFlowSummary, MonthlyFlowSummary
+from .models import (
+    FlowCalculation,
+    HourlyFlowSummary,
+    WeeklyFlowSummary,
+    MonthlyFlowSummary
+)
 
 
 def create_hourly_summary():
@@ -12,17 +17,17 @@ def create_hourly_summary():
     flows = FlowCalculation.objects.filter(
         timestamp__gte=hour_start,
         timestamp__lt=hour_end,
-        h__gt=0
+        Pd__gt=0
     )
 
     if flows.exists():
-        avg_h = flows.aggregate(avg_h=Avg('h'))['avg_h']
+        avg_Pd = flows.aggregate(avg_Pd=Avg('Pd'))['avg_Pd']
         settings = flows.first().settings
 
         HourlyFlowSummary.objects.update_or_create(
             timestamp=hour_start,
             defaults={
-                'h': round(avg_h, 4),
+                'Pd': round(avg_Pd, 4),
                 'settings': settings
             }
         )
@@ -34,20 +39,20 @@ def create_weekly_summary():
     week_start = week_start.replace(hour=0, minute=0, second=0, microsecond=0)
     week_end = week_start + timedelta(days=7)
 
-    flows = FlowCalculation.objects.filter(
+    hourly_summaries = HourlyFlowSummary.objects.filter(
         timestamp__gte=week_start,
         timestamp__lt=week_end,
-        h__gt=0
+        Pd__gt=0
     )
 
-    if flows.exists():
-        avg_h = flows.aggregate(avg_h=Avg('h'))['avg_h']
-        settings = flows.first().settings
+    if hourly_summaries.exists():
+        avg_Pd = hourly_summaries.aggregate(avg_Pd=Avg('Pd'))['avg_Pd']
+        settings = hourly_summaries.first().settings
 
         WeeklyFlowSummary.objects.update_or_create(
             timestamp=week_start,
             defaults={
-                'h': round(avg_h, 4),
+                'Pd': round(avg_Pd, 4),
                 'settings': settings
             }
         )
@@ -57,30 +62,28 @@ def create_monthly_summary():
     now = timezone.now()
     month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
-    # Get the 1st day of the next month
     if month_start.month == 12:
         next_month = month_start.replace(year=month_start.year + 1, month=1)
     else:
         next_month = month_start.replace(month=month_start.month + 1)
 
-    flows = FlowCalculation.objects.filter(
+    weekly_summaries = WeeklyFlowSummary.objects.filter(
         timestamp__gte=month_start,
         timestamp__lt=next_month,
-        h__gt=0
+        Pd__gt=0
     )
 
-    if flows.exists():
-        avg_h = flows.aggregate(avg_h=Avg('h'))['avg_h']
-        settings = flows.first().settings
+    if weekly_summaries.exists():
+        avg_Pd = weekly_summaries.aggregate(avg_Pd=Avg('Pd'))['avg_Pd']
+        settings = weekly_summaries.first().settings
 
         MonthlyFlowSummary.objects.update_or_create(
             timestamp=month_start,
             defaults={
-                'h': round(avg_h, 4),
+                'Pd': round(avg_Pd, 4),
                 'settings': settings
             }
         )
-
 
 
 # send telegram bot

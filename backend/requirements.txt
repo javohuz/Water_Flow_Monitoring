@@ -1,5 +1,8 @@
 Django==5.2
 django-ckeditor==6.7.2
+django-import-export==4.3.7
 django-jazzmin==3.0.1
-Pillow==11.1.0
+pillow==11.1.0
 requests==2.32.3
+tablib[all]==3.8.0
+openpyxl==3.1.5

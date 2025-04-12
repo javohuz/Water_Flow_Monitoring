@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     
     # libraries
     'ckeditor',
-
+    'import_export',
+    'openpyxl',
 ]
 
 MIDDLEWARE = [

@@ -9,17 +9,17 @@
 # create_all_monthly_summaries()
 
 
-
 from django.utils import timezone
 from django.db.models import Avg
 from datetime import timedelta
-from .models import FlowCalculation, HourlyFlowSummary, WeeklyFlowSummary, MonthlyFlowSummary, ChannelSettings
+from .models import (
+    FlowCalculation,
+    HourlyFlowSummary,
+    WeeklyFlowSummary,
+    MonthlyFlowSummary,
+)
 
 def create_all_hourly_summaries():
-    """
-    Generate hourly summaries for all available FlowCalculation data.
-    """
-    # Determine the range of data
     first_entry = FlowCalculation.objects.order_by('timestamp').first()
     last_entry = FlowCalculation.objects.order_by('-timestamp').first()
 
@@ -35,27 +35,25 @@ def create_all_hourly_summaries():
         flows = FlowCalculation.objects.filter(timestamp__gte=current_time, timestamp__lt=next_hour)
 
         if flows.exists():
-            avg_h = flows.aggregate(avg_h=Avg('h'))['avg_h']
+            avg_Pd = flows.aggregate(avg_Pd=Avg('Pd'))['avg_Pd']
             settings = flows.first().settings
 
             HourlyFlowSummary.objects.update_or_create(
                 timestamp=current_time,
-                defaults={'h': round(avg_h, 4), 'settings': settings}
+                defaults={'Pd': round(avg_Pd, 4), 'settings': settings}
             )
 
         current_time = next_hour
 
-    print("Hourly summaries generated for all data.")
+    print("✅ Hourly summaries generated from FlowCalculation.")
+
 
 def create_all_weekly_summaries():
-    """
-    Generate weekly summaries for all available FlowCalculation data.
-    """
-    first_entry = FlowCalculation.objects.order_by('timestamp').first()
-    last_entry = FlowCalculation.objects.order_by('-timestamp').first()
+    first_entry = HourlyFlowSummary.objects.order_by('timestamp').first()
+    last_entry = HourlyFlowSummary.objects.order_by('-timestamp').first()
 
     if not first_entry or not last_entry:
-        print("No FlowCalculation data available.")
+        print("No HourlyFlowSummary data available.")
         return
 
     current_time = first_entry.timestamp - timedelta(days=first_entry.timestamp.weekday())
@@ -64,30 +62,28 @@ def create_all_weekly_summaries():
 
     while current_time < end_time:
         next_week = current_time + timedelta(days=7)
-        flows = FlowCalculation.objects.filter(timestamp__gte=current_time, timestamp__lt=next_week)
+        flows = HourlyFlowSummary.objects.filter(timestamp__gte=current_time, timestamp__lt=next_week)
 
         if flows.exists():
-            avg_h = flows.aggregate(avg_h=Avg('h'))['avg_h']
+            avg_Pd = flows.aggregate(avg_Pd=Avg('Pd'))['avg_Pd']
             settings = flows.first().settings
 
             WeeklyFlowSummary.objects.update_or_create(
                 timestamp=current_time,
-                defaults={'h': round(avg_h, 4), 'settings': settings}
+                defaults={'Pd': round(avg_Pd, 4), 'settings': settings}
             )
 
         current_time = next_week
 
-    print("Weekly summaries generated for all data.")
+    print("✅ Weekly summaries generated from HourlyFlowSummary.")
+
 
 def create_all_monthly_summaries():
-    """
-    Generate monthly summaries for all available FlowCalculation data.
-    """
-    first_entry = FlowCalculation.objects.order_by('timestamp').first()
-    last_entry = FlowCalculation.objects.order_by('-timestamp').first()
+    first_entry = WeeklyFlowSummary.objects.order_by('timestamp').first()
+    last_entry = WeeklyFlowSummary.objects.order_by('-timestamp').first()
 
     if not first_entry or not last_entry:
-        print("No FlowCalculation data available.")
+        print("No WeeklyFlowSummary data available.")
         return
 
     current_time = first_entry.timestamp.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -99,17 +95,17 @@ def create_all_monthly_summaries():
         else:
             next_month = current_time.replace(month=current_time.month + 1)
 
-        flows = FlowCalculation.objects.filter(timestamp__gte=current_time, timestamp__lt=next_month)
+        flows = WeeklyFlowSummary.objects.filter(timestamp__gte=current_time, timestamp__lt=next_month)
 
         if flows.exists():
-            avg_h = flows.aggregate(avg_h=Avg('h'))['avg_h']
+            avg_Pd = flows.aggregate(avg_Pd=Avg('Pd'))['avg_Pd']
             settings = flows.first().settings
 
             MonthlyFlowSummary.objects.update_or_create(
                 timestamp=current_time,
-                defaults={'h': round(avg_h, 4), 'settings': settings}
+                defaults={'Pd': round(avg_Pd, 4), 'settings': settings}
             )
 
         current_time = next_month
 
-    print("Monthly summaries generated for all data.")
+    print("✅ Monthly summaries generated from WeeklyFlowSummary.")

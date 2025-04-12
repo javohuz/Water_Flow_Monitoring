@@ -23,13 +23,12 @@
     {% endif %}
 
     <ul class="settings-list">
-      <li><strong>Qo‘polilik koeffitsienti (n):</strong> {{ settings.n }}</li>
+      <li><strong>G'adir budurlik koyfitsienti n (n):</strong> {{ settings.n }}</li>
       <li><strong>Kanal eni (b):</strong> {{ settings.b }} m</li>
       <li><strong>Yon devor burchagi (α):</strong> {{ settings.alpha }}°</li>
       <li><strong>Gidravlik qiyalik (S):</strong> {{ settings.S }}</li>
       <li><strong>Zichlik (ρ):</strong> {{ settings.rho }} kg/m³</li>
       <li><strong>Gravitatsiya (g):</strong> {{ settings.g }} m/s²</li>
-      <li><strong>Bosim (Pd):</strong> {{ settings.Pd }} Pa</li>
       <li><strong>Minimal suv balandligi:</strong> <span class="tag min">h = {{ settings.min_height }} m</span></li>
       <li><strong>Maksimal suv balandligi:</strong> <span class="tag max">h = {{ settings.max_height }} m</span></li>
     </ul>
@@ -43,6 +42,7 @@
   <table border="1" cellpadding="8">
     <tr>
       <th>Vaqt (Timestamp)</th>
+      <th>Gidrostatik bosim Pd (Pa)</th>
       <th>Suv balandligi h (m)</th>
       <th>Yuza A (m²)</th>
       <th>Perimetr P (m)</th>
@@ -53,6 +53,7 @@
     {% for flow in flows %}
     <tr>
       <td>{{ flow.timestamp|date:"Y/m/d | H:i" }}</td>
+      <td>{{ flow.Pd }}</td>
       <td>{{ flow.h }}</td>
       <td>{{ flow.A }}</td>
       <td>{{ flow.P }}</td>

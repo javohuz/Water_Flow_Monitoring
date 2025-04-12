@@ -11,6 +11,7 @@
   <table border="1" cellpadding="8">
     <tr>
       <th>Soat</th>
+      <th>Pd (Pa)</th>
       <th>h (m)</th>
       <th>A (m²)</th>
       <th>P (m)</th>
@@ -21,6 +22,7 @@
     {% for flow in hourly_flows %}
     <tr>
       <td>{{ flow.timestamp|date:"Y/m/d | H:00" }}</td>
+      <td>{{ flow.Pd }}</td>
       <td>{{ flow.h }}</td>
       <td>{{ flow.A }}</td>
       <td>{{ flow.P }}</td>

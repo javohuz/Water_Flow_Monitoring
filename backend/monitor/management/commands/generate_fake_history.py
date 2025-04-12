@@ -6,38 +6,45 @@ import random
 
 
 class Command(BaseCommand):
-    help = "Generate hourly flow data for the past 3 months"
+    help = "🧪 Generate hourly flow data for the past 3 months using Pd (pressure)."
 
     def handle(self, *args, **kwargs):
         settings = ChannelSettings.objects.first()
         if not settings:
-            self.stdout.write(self.style.ERROR("No ChannelSettings found."))
+            self.stdout.write(self.style.ERROR("❌ No ChannelSettings found."))
             return
+
+        # Remove all previous flow data
+        FlowCalculation.objects.all().delete()
+        self.stdout.write(self.style.WARNING("🗑️ Old flow records deleted."))
 
         now = timezone.now()
         start_time = now - timedelta(days=90)
         total_hours = 90 * 24
 
-        # Initial h (starting height)
-        h = round(random.uniform(0.3, 0.7), 4)
+        # Initial Pd = rho * g * h
+        initial_h = round(random.uniform(0.3, 0.7), 4)
+        Pd = round(settings.rho * settings.g * initial_h, 2)
 
         for i in range(total_hours):
             timestamp = start_time + timedelta(hours=i)
 
-            # Add slow randomness to simulate real change
-            h_change = random.uniform(-0.02, 0.02)
-            h += h_change
+            # Simulate natural fluctuation in Pd
+            Pd_change = random.uniform(-100, 100)
+            Pd += Pd_change
 
-            # Clamp to valid range
-            h = max(0.1, min(h, 1.5))
+            # Clamp Pd (0.1m to 1.5m)
+            min_Pd = round(settings.rho * settings.g * 0.1, 2)
+            max_Pd = round(settings.rho * settings.g * 1.5, 2)
+            Pd = max(min_Pd, min(Pd, max_Pd))
 
             FlowCalculation.objects.create(
                 settings=settings,
-                h=round(h, 4),
+                Pd=Pd,
                 timestamp=timestamp
             )
 
             if i % 24 == 0:
-                self.stdout.write(f"✅ Created {i} / {total_hours} hourly records...")
+                self.stdout.write(f"📦 Created {i} / {total_hours} hourly records...")
 
         self.stdout.write(self.style.SUCCESS("✅ Finished generating 3 months of hourly flow data."))
