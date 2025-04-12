@@ -3,20 +3,20 @@
 {% block title %}Haftalik Oqim Ma'lumotlari{% endblock %}
 
 {% block content %}
-<h1>Haftalik o‘rtacha suv oqimi</h1>
+<h1>Obyektning har haftadagi malumotlari</h1>
 
 <div class="table-wrapper">
 
   <table border="1" cellpadding="8">
     <tr>
-      <th>Hafta</th>
-      <th>Pd (Pa)</th>
-      <th>h (m)</th>
-      <th>A (m²)</th>
-      <th>P (m)</th>
-      <th>R (m)</th>
-      <th>V (m/s)</th>
-      <th>Q (m³/s)</th>
+      <th>Vaqt (t)</th>
+      <th>Gidrostatik bosim Pd (Pa)</th>
+      <th>Suv sathi h (m)</th>
+      <th>Yuza A (m²)</th>
+      <th>Perimetr P (m)</th>
+      <th>Radius R (m)</th>
+      <th>Tezlik V (m/s)</th>
+      <th>Suv sarfi Q (m³/s)</th>
     </tr>
     {% for flow in weekly_flows %}
     <tr>
@@ -33,9 +33,15 @@
   </table>
 </div>
 
-<h2 style="text-align: center;">Haftalik Suv Sarfi Grafigi</h2>
-<div id="chart-container">
-  <canvas id="weeklyChart"></canvas>
+<h2 style="text-align: center;">
+  Suv sarfining vaqtga bog'liqlik grafigi,
+  <strong style="font-style: italic;">Q = f(t)</strong>
+</h2>
+<div class="box-graph">
+
+  <div id="chart-container">
+    <canvas id="weeklyChart"></canvas>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -49,7 +55,7 @@
   const data = {
     labels: labels,
     datasets: [{
-      label: 'Haftalik Q (m³/s)',
+      label: 'Haftalik suv sarfi Q (m³/s)',
       data: [
         {% for flow in weekly_flows reversed %}
           {{ flow.Q }}{% if not forloop.last %},{% endif %}
@@ -68,7 +74,7 @@
       plugins: {
         title: {
           display: true,
-          text: 'Haftalik suv sarfi grafigi'
+          text: ''
         }
       },
       scales: {

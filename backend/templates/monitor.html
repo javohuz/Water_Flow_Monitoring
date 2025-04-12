@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}Real Vaqtdagi Oqim Ma'lumotlari{% endblock %}
+{% block title %}Asosiy page{% endblock %}
 
 {% block content %}
 
 <section class="settings-section">
   <div class="settings-image">
     {% if settings.image %}
-      <img src="{{ settings.image.url }}" alt="Kanal rasmi">
+    <img src="{{ settings.image.url }}" alt="Kanal rasmi">
     {% else %}
-      <div class="no-image">🖼 Rasm yo'q</div>
+    <div class="no-image">🖼 Rasm yo'q</div>
     {% endif %}
   </div>
 
@@ -17,33 +17,34 @@
     <h2>{{ settings.name }}</h2>
 
     {% if settings.description %}
-      <div class="settings-description">
-        {{ settings.description|safe }}
-      </div>
+    <div class="settings-description">
+      {{ settings.description|safe }}
+    </div>
     {% endif %}
 
     <ul class="settings-list">
-      <li><strong>G'adir budurlik koyfitsienti n (n):</strong> {{ settings.n }}</li>
+      <li><strong>G'adir budurlik koyfitsienti n (n):</strong> {{ settings.n
+        }}</li>
       <li><strong>Kanal eni (b):</strong> {{ settings.b }} m</li>
       <li><strong>Yon devor burchagi (α):</strong> {{ settings.alpha }}°</li>
       <li><strong>Gidravlik qiyalik (S):</strong> {{ settings.S }}</li>
-      <li><strong>Zichlik (ρ):</strong> {{ settings.rho }} kg/m³</li>
-      <li><strong>Gravitatsiya (g):</strong> {{ settings.g }} m/s²</li>
-      <li><strong>Minimal suv balandligi:</strong> <span class="tag min">h = {{ settings.min_height }} m</span></li>
-      <li><strong>Maksimal suv balandligi:</strong> <span class="tag max">h = {{ settings.max_height }} m</span></li>
+      <li><strong>Suvning zichligi (ρ):</strong> {{ settings.rho }} kg/m³</li>
+      <li><strong>Erkin tushush tezlanishi (g):</strong> {{ settings.g }} m/s²</li>
+      <li><strong>Minimal suv sathi:</strong> <span class="tag min">h = {{ settings.min_height }} m</span></li>
+      <li><strong>Maksimal suv sathi:</strong> <span class="tag max">h = {{ settings.max_height }} m</span></li>
     </ul>
   </div>
 </section>
 
-<h1>Eng so‘nggi suv oqimi hisoblari</h1>
+<h1>Obyektning real vaqtdagi malumotlari</h1>
 
 <div class="table-wrapper">
 
   <table border="1" cellpadding="8">
     <tr>
-      <th>Vaqt (Timestamp)</th>
+      <th>Vaqt (t)</th>
       <th>Gidrostatik bosim Pd (Pa)</th>
-      <th>Suv balandligi h (m)</th>
+      <th>Suv sathi h (m)</th>
       <th>Yuza A (m²)</th>
       <th>Perimetr P (m)</th>
       <th>Radius R (m)</th>
@@ -65,9 +66,17 @@
   </table>
 </div>
 
-<h2 style="text-align: center;">Eng so‘nggi suv oqimi Grafigi</h2>
-<div id="chart-container">
-  <canvas id="flowChart"></canvas>
+<div id="alert-box" class="alert-box">
+  <p id="alert-message"></p>
+</div>
+
+
+<h2 style="text-align: center;">Suv sarfining vaqtga bog'liqlik grafigi,
+  <strong>Q=f(t) font style difrent</strong></h2>
+<div class="box-graph">
+  <div id="chart-container">
+    <canvas id="flowChart"></canvas>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -101,7 +110,7 @@
       plugins: {
         title: {
           display: true,
-          text: 'Soat bo‘yicha suv sarfi grafigi'
+          text: ''
         }
       },
       scales: {
@@ -111,4 +120,46 @@
     }
   });
 </script>
+
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    const rows = document.querySelectorAll(".table-wrapper table tr");
+    const alertBox = document.getElementById("alert-box");
+    const message = document.getElementById("alert-message");
+
+    if (rows.length <= 1) return;
+
+    // Get thresholds from the settings HTML
+    const minText = document.querySelector(".tag.min").textContent.match(/([\d.]+)/);
+    const maxText = document.querySelector(".tag.max").textContent.match(/([\d.]+)/);
+
+    const minH = minText ? parseFloat(minText[1]) : null;
+    const maxH = maxText ? parseFloat(maxText[1]) : null;
+
+    // ✅ Use the first data row (row[1]) as the latest value
+    const latestRow = rows[1];
+    const latestH = parseFloat(latestRow.children[2].textContent.trim());
+
+    rows.forEach((row, index) => {
+      if (index !== 0) row.classList.remove("highlight-high", "highlight-low", "normal");
+    });
+
+    if (latestH > maxH) {
+      latestRow.classList.add("highlight-high");
+      alertBox.classList.add("show");
+      message.innerHTML = `🚨 Suv sathi <strong>juda yuqori</strong>: h = ${latestH} m<br>Mas'ullarga SMS yuborildi.`;
+    } else if (latestH < minH) {
+      latestRow.classList.add("highlight-low");
+      alertBox.classList.add("show");
+      message.innerHTML = `⚠️ Suv sathi <strong>juda past</strong>: h = ${latestH} m<br>Mas'ullarga SMS yuborildi.`;
+    } else {
+      alertBox.classList.remove("show");
+      latestRow.classList.add("normal");
+    }
+  });
+</script>
+
+
+
+
 {% endblock %}
