@@ -1,5 +1,7 @@
 # Suv Oqimini Monitoring Loyihasi / Water Flow Monitoring Project
 
+https://sn.javo.uz/
+
 Bu loyiha real vaqtli suv oqimini kuzatish uchun yaratilgan bo‘lib, Django orqali backend, HTML/CSS/JS orqali frontend va sensorli tizim bilan ishlash uchun moslashtirilgan.
 
 This project is designed to monitor water flow in real-time, with a Django backend and HTML/CSS/JS frontend, optionally integrated with sensor systems.
